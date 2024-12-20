@@ -37,7 +37,40 @@
    pip3 install -r requirements.txt
    ```
 
+Here is a structured README format for the dataset used in the project:
 
+---
+
+
+
+## **Dataset Overview**
+This dataset contains session-level data for customers of a telecommunication service provider. It is designed to analyze user engagement and activity patterns across various applications and services. The data is crucial for assessing Quality of Service (QoS) and optimizing resource allocation based on user behavior.
+
+---
+
+## **Column Descriptions**
+
+| **Column Name**              | **Description**                                                                 |
+|-------------------------------|---------------------------------------------------------------------------------|
+| `MSISDN/Number`                     | Unique identifier for the customer (Mobile Subscriber Integrated Services Digital Network). |
+| `Dur. (ms)`                  | Total duration of user sessions in milliseconds.                                |
+| `Total DL (Bytes)`           | Total download traffic in bytes during the session.                             |
+| `Total UL (Bytes)`           | Total upload traffic in bytes during the session.                               |
+| `bearer id`                  | Number of sessions for the customer during the dataset period.                  |
+| `Social Media DL (Bytes)`    | Download traffic for social media apps (e.g., Facebook, Instagram).             |
+| `Social Media UL (Bytes)`    | Upload traffic for social media apps (e.g., Facebook, Instagram).               |
+| `Youtube DL (Bytes)`         | Download traffic for YouTube application.                                       |
+| `Youtube UL (Bytes)`         | Upload traffic for YouTube application.                                         |
+| `Netflix DL (Bytes)`         | Download traffic for Netflix application.                                       |
+| `Netflix UL (Bytes)`         | Upload traffic for Netflix application.                                         |
+| `Google DL (Bytes)`          | Download traffic for Google services (e.g., Search, Maps).                      |
+| `Google UL (Bytes)`          | Upload traffic for Google services (e.g., Search, Maps).                        |
+| `Email DL (Bytes)`           | Download traffic for email services.                                            |
+| `Email UL (Bytes)`           | Upload traffic for email services.                                              |
+| `Gaming DL (Bytes)`          | Download traffic for gaming applications.                                       |
+| `Gaming UL (Bytes)`          | Upload traffic for gaming applications.                                         |
+
+---
 
 
 
