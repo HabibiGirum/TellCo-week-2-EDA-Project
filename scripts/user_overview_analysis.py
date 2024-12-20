@@ -19,10 +19,12 @@ class UserOverviewAnalysis:
         # Display basic information about the dataset
         # Number of rows, columns, data types, and memory usage
         self.dataset.info()
-        print(f'Number of rows: {self.dataset.shape[0]}')
-        print(f'Number of columns: {self.dataset.shape[1]}')
-        print(f'Data types: {self.dataset.dtypes}')
-        print(f'Memory usage: {self.dataset.memory_usage().sum()} bytes')
+    def check_dataset_missing(self):
+        missing_percentage = (self.dataset.isnull().sum() / len(self.dataset)) * 100
+        print(missing_percentage[missing_percentage > 0])
+    def column(self):
+        print(self.dataset.columns)
+
     
     def top_10_Handset(self):
         # Top 10 handsets type
