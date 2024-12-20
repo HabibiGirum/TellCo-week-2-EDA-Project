@@ -25,20 +25,18 @@ class UserOverviewAnalysis:
         print(f'Memory usage: {self.dataset.memory_usage().sum()} bytes')
     
     def top_10_Handset(self):
-        # 2. Identifying the Top 10 Handsets
-        handset_counts = self.dataset['Handset Type'].value_counts().head(10)
-        print("\nTop 10 Handsets:")
-        print(handset_counts)
-        # Plotting Top 10 Handsets
+        # Top 10 handsets type
+        top_10_handsets = self.dataset['Handset Type'].value_counts().head(10)
+
+        # Visualization
         plt.figure(figsize=(10, 6))
-        handset_counts.plot(kind='bar', color='skyblue')
+        sns.barplot(x=top_10_handsets.values, y=top_10_handsets.index, palette="viridis")
         plt.title('Top 10 Handsets Used by Customers')
-        plt.xlabel('Handset')
-        plt.ylabel('Frequency')
-        plt.xticks(rotation=45)
-        plt.tight_layout()
+        plt.xlabel('Count')
+        plt.ylabel('Handset Type')
         plt.savefig('top_10_handsets.png')
         plt.show()
+
     
     def top_3_manufacturers(self):
         # 3. Identifying the Top 3 Manufacturers
@@ -65,7 +63,7 @@ class UserOverviewAnalysis:
             print(f"\nTop 5 Handsets for {manufacturer}:")
             print(top_handsets)
             # Plotting Top 5 Handsets for each manufacturer
-            plt.figure(figsize=(10, 6))
+            plt.figure(figsize=(12, 8))
             top_handsets.plot(kind='bar', color='orange')
             plt.title(f'Top 5 Handsets for {manufacturer}')
             plt.xlabel('Handset')
@@ -74,33 +72,96 @@ class UserOverviewAnalysis:
             plt.tight_layout()
             plt.savefig(f'top_5_handsets_{manufacturer}.png')
             plt.show()
+        print("all in one graph ")
+        # Top 3 manufacturers
+        top_3 = top_manufactures
+
+        # Top 5 handsets per manufacturer
+        top_5_per_manufacturer = {}
+        for manufacturer in top_3:
+            top_5_per_manufacturer[manufacturer] = self.dataset[self.dataset['Handset Manufacturer'] == manufacturer]['Handset Type'].value_counts().head(5)
+
+        # Visualization
+        plt.figure(figsize=(12, 8))
+        for manufacturer, handsets in top_5_per_manufacturer.items():
+            sns.barplot(x=handsets.values, y=handsets.index, label=manufacturer)
+
+        plt.title('Top 5 Handsets per Top 3 Manufacturers')
+        plt.xlabel('Count')
+        plt.ylabel('Handset Type')
+        plt.legend(title="Manufacturer")
+        plt.show()
+
+
+
     def aggregate_per_user(self):
+        # Ensure dataset is loaded
+        if self.dataset is None:
+            raise ValueError("Dataset is not loaded properly.")
+        
         agg_data = self.dataset.groupby('IMSI').agg(
             number_of_xdr_sessions=('Bearer Id', 'count'),
             total_duration=('Dur. (ms)', 'sum'),
             total_download=('Total DL (Bytes)', 'sum'),
             total_upload=('Total UL (Bytes)', 'sum'),
         ).reset_index()
-        # Add the total_data_volume column
-        agg_data['total_data_volume'] = agg_data['total_download'] + agg_data['total_upload']       
 
+        # Add the total_data_volume column
+        agg_data['total_data_volume'] = agg_data['total_download'] + agg_data['total_upload']
+        
         print("\nAggregated Data Sample:")
-        # agg_data.head()
+        print(agg_data.head())  # Display sample
         return agg_data
-    
-    def handle_missing_values(self, strategy='mean', ):
-        # Handle missing values in the dataset based on the specified strategy
-        # Replace missing values with the mean, median, or mode of the respective columns
+
+    def handle_missing_values(self, strategy='mean'):
+        # Aggregate data first
         agg_data = self.aggregate_per_user()
-        print(agg_data)
+        
+        # Handle missing values
+        print("\nBefore Handling Missing Values:")
+        print(agg_data.isnull().sum())  # Show missing value count
+        
         if strategy == 'mean':
             agg_data.fillna(agg_data.mean(), inplace=True)
-        elif strategy =='median':
+        elif strategy == 'median':
             agg_data.fillna(agg_data.median(), inplace=True)
-        elif strategy =='mode':
+        elif strategy == 'mode':
             agg_data.fillna(agg_data.mode().iloc[0], inplace=True)
         else:
-            raise ValueError('Invalid strategy for handling missing values. Choose from: mean, median, mode')
-    
-    
+            raise ValueError("Invalid strategy for handling missing values. Choose from: mean, median, mode")
         
+        print("\nAfter Handling Missing Values:")
+        print(agg_data.isnull().sum())  # Verify missing values are handled
+        return agg_data
+    def decile_classification(self,data):
+        decile_labels = ['Decile 1', 'Decile 2', 'Decile 3', 'Decile 4', 'Decile 5']
+        data['duration_decile'] = pd.qcut(data['total_duration'], q=5, labels=decile_labels)
+        decile_summary = data.groupby('duration_decile')[['total_data_volume']].sum()
+        print("\nDecile Summary:")
+        print(decile_summary)
+        # Basic Metrics
+        print("\nBasic Metrics:")
+        print(data[['total_duration', 'total_download', 'total_upload', 'total_data_volume']].describe())
+        
+        # Correlation Analysis
+        corr_matrix = data[['total_duration', 'total_download', 'total_upload', 'total_data_volume']].corr()
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+        plt.title('Correlation Matrix')
+        plt.tight_layout()
+        plt.savefig('correlation_matrix.png')
+        plt.show()
+
+        # PCA for Dimensionality Reduction
+        pca = PCA(n_components=2)
+        reduced_data = pca.fit_transform(data[['total_duration', 'total_download', 'total_upload', 'total_data_volume']])
+        print("\nExplained Variance Ratio:", pca.explained_variance_ratio_)
+
+        plt.figure(figsize=(8, 6))
+        plt.scatter(reduced_data[:, 0], reduced_data[:, 1], alpha=0.6, color='purple')
+        plt.title('PCA: Dimensionality Reduction')
+        plt.xlabel('Principal Component 1')
+        plt.ylabel('Principal Component 2')
+        plt.tight_layout()
+        plt.savefig('pca_scatter.png')
+        plt.show()
