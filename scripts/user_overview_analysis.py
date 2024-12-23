@@ -36,7 +36,7 @@ class UserOverviewAnalysis:
         plt.title('Top 10 Handsets Used by Customers')
         plt.xlabel('Count')
         plt.ylabel('Handset Type')
-        plt.savefig('top_10_handsets.png')
+        
         plt.show()
 
     
@@ -53,7 +53,6 @@ class UserOverviewAnalysis:
         plt.ylabel('Frequency')
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.savefig('top_3_manufacturers.png')
         plt.show()
         top_manufacturers = manufacturer_counts.index
         return top_manufacturers
@@ -72,7 +71,6 @@ class UserOverviewAnalysis:
             plt.ylabel('Frequency')
             plt.xticks(rotation=45)
             plt.tight_layout()
-            plt.savefig(f'top_5_handsets_{manufacturer}.png')
             plt.show()
         print("all in one graph ")
         # Top 3 manufacturers
@@ -151,7 +149,6 @@ class UserOverviewAnalysis:
         sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
         plt.title('Correlation Matrix')
         plt.tight_layout()
-        plt.savefig('correlation_matrix.png')
         plt.show()
 
         # PCA for Dimensionality Reduction
@@ -165,5 +162,4 @@ class UserOverviewAnalysis:
         plt.xlabel('Principal Component 1')
         plt.ylabel('Principal Component 2')
         plt.tight_layout()
-        plt.savefig('pca_scatter.png')
         plt.show()
