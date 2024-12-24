@@ -4,8 +4,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+import streamlit as st
+import plotly.express as px
 
 
+# -------------------------------
+# ExperienceAnalytics Class
+# -------------------------------
 class ExperienceAnalytics:
     def __init__(self, dataset_path):
         self.dataset_path = dataset_path
@@ -87,3 +92,52 @@ class ExperienceAnalytics:
         
         cluster_summary = df.groupby('Cluster_Name')[numeric_features].mean().reset_index()
         return cluster_summary
+
+
+# -------------------------------
+# Streamlit Experience Analysis
+# -------------------------------
+def experience_analysis_page():
+    st.title("📊 Experience Analysis")
+    
+    # Initialize Analysis Class
+    analysis = ExperienceAnalytics('Data/Copy of Week2_challenge_data_source(CSV).csv')
+    df = analysis.dataset
+    
+    # Plot 1: Average Download Speed by Region
+    st.subheader("Average Download Speed by Region")
+    if 'Region' in df.columns and 'Avg Download Speed' in df.columns:
+        fig = px.bar(df, x='Region', y='Avg Download Speed', color='Region')
+        st.plotly_chart(fig)
+    else:
+        st.warning("Required columns for this plot are missing.")
+    
+    # Plot 2: Latency Distribution
+    st.subheader("Latency Distribution")
+    if 'Latency' in df.columns:
+        fig = px.histogram(df, x='Latency')
+        st.plotly_chart(fig)
+    else:
+        st.warning("Required column for this plot is missing.")
+    
+    # Aggregated Data
+    st.subheader("Aggregated Customer Data")
+    agg_data = analysis.aggregate_per_customer()
+    st.write(agg_data.head())
+    
+    # Clustering
+    st.subheader("K-Means Clustering")
+    cluster_summary = analysis.kmeans_clustering()
+    st.write(cluster_summary)
+    
+    # Top 10 Handsets by Average Throughput
+    st.subheader("Top 10 Handsets by Average Throughput")
+    throughput, _ = analysis.distribution_per_handset()
+    st.bar_chart(throughput.head(10))
+
+
+# -------------------------------
+# Streamlit App Entry Point
+# -------------------------------
+if __name__ == "__main__":
+    experience_analysis_page()
