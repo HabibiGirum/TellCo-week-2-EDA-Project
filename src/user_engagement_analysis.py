@@ -5,7 +5,7 @@ from scripts.user_engagement_analysis import UserEngagementAnalysis
 # Streamlit App Interface
 def user_engagement_page():
     st.title("📊 User Engagement Analysis")
-
+    st.write("After uploading your dataset, use the sidebar to explore detailed insights about user engagement, including various analytical.")
     # File Upload
     uploaded_file = st.file_uploader("Upload your dataset (CSV file)", type=["csv"])
 

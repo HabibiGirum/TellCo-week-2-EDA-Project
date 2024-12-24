@@ -37,14 +37,14 @@ def perform_pca(data, features, n_components=2):
     )
     st.plotly_chart(fig)
 
-# Define the UserOverviewAnalysis class
+# User Overview Analysis Class
 class UserOverviewAnalysis:
     def __init__(self, dataset):
         self.dataset = dataset
 
     def data_info(self):
-        st.write("### Dataset Information")
-        st.text(self.dataset.info(buf=None))
+        st.write("### Heading 5 rows")
+        st.text(self.dataset.head(5))
 
     def check_missing_values(self):
         st.write("### Missing Values Overview")
@@ -80,6 +80,38 @@ class UserOverviewAnalysis:
         )
         return manufacturer_counts.index
 
+    def top_5_handset_top_3_manufacturers(self):
+        st.write("### Top 5 Handsets per Top 3 Manufacturers")
+        top_manufacturers = self.top_n_manufacturers(n=3)
+        for manufacturer in top_manufacturers:
+            st.write(f"#### Top 5 Handsets for {manufacturer}")
+            top_handsets = self.dataset[self.dataset['Handset Manufacturer'] == manufacturer]['Handset Type'].value_counts().head(5)
+            st.write(top_handsets)
+            fig = px.bar(
+                x=top_handsets.values,
+                y=top_handsets.index,
+                orientation="h",
+                title=f"Top 5 Handsets for {manufacturer}",
+                labels={"x": "Count", "y": "Handset Type"},
+            )
+            st.plotly_chart(fig)
+        combined_data = []
+        for manufacturer in top_manufacturers:
+            top_handsets = self.dataset[self.dataset['Handset Manufacturer'] == manufacturer]['Handset Type'].value_counts().head(5)
+            for handset, count in top_handsets.items():
+                combined_data.append({"Manufacturer": manufacturer, "Handset": handset, "Count": count})
+        combined_df = pd.DataFrame(combined_data)
+        fig_combined = px.bar(
+            combined_df,
+            x="Count",
+            y="Handset",
+            color="Manufacturer",
+            orientation="h",
+            title="Top 5 Handsets per Top 3 Manufacturers (Combined)",
+            labels={"Count": "Frequency", "Handset": "Handset Type"},
+        )
+        st.plotly_chart(fig_combined)
+
     def aggregate_per_user(self):
         st.write("### Aggregate Data Per User")
         agg_data = self.dataset.groupby('IMSI').agg(
@@ -98,14 +130,13 @@ class UserOverviewAnalysis:
         data['duration_decile'] = pd.qcut(data['total_duration'], q=5, labels=decile_labels)
         decile_summary = data.groupby('duration_decile')[['total_data_volume']].sum()
         st.write(decile_summary)
-        st.write("### Correlation Matrix")
         display_correlation_matrix(data, ['total_duration', 'total_download', 'total_upload', 'total_data_volume'])
-        st.write("### PCA: Dimensionality Reduction")
         perform_pca(data, ['total_duration', 'total_download', 'total_upload', 'total_data_volume'])
 
 # Streamlit App Interface
 def user_overview_page():
     st.title("📊 User Overview Analysis")
+    st.write("After uploading your dataset, use the sidebar to explore detailed insights about user overviews, including various analytical options for your data.")
     uploaded_file = st.file_uploader("Upload your dataset (CSV file)", type=["csv"])
 
     if uploaded_file:
@@ -119,12 +150,13 @@ def user_overview_page():
                 "Show Columns",
                 "Top 10 Handsets",
                 "Top 3 Manufacturers",
+                "Top 5 Handsets per Top 3 Manufacturers",
                 "Aggregate Per User",
                 "Decile Classification"
             ]
         )
 
-        if analysis_option == "Dataset Info":
+        if analysis_option == "Dataset Head 5 row":
             analysis.data_info()
         elif analysis_option == "Check Missing Values":
             analysis.check_missing_values()
@@ -134,6 +166,8 @@ def user_overview_page():
             analysis.top_n_handsets()
         elif analysis_option == "Top 3 Manufacturers":
             analysis.top_n_manufacturers()
+        elif analysis_option == "Top 5 Handsets per Top 3 Manufacturers":
+            analysis.top_5_handset_top_3_manufacturers()
         elif analysis_option == "Aggregate Per User":
             agg_data = analysis.aggregate_per_user()
             st.write(agg_data)
