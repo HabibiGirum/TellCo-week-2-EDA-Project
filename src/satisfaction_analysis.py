@@ -7,7 +7,7 @@ from scripts.satisfaction_analysis import SatisfactionAnalysis
 # Streamlit App Interface
 def satisfaction_analysis_page():
     st.title("Satisfaction Analysis")
-
+    st.write("After uploading your dataset, use the sidebar to explore detailed insights about user satisfaction, including various analytical.")
     # File Upload
     uploaded_file = st.file_uploader("Upload your dataset (CSV file)", type=["csv"])
 

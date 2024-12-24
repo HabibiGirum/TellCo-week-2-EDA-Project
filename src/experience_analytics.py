@@ -3,6 +3,7 @@ import plotly.express as px
 from scripts.experience_analytics import ExperienceAnalytics
 def experience_analytics_page():
     st.title("📈 Experience Analytics")
+    st.write("After uploading your dataset, use the sidebar to explore detailed insights about user experience, including various analytical.")
 
     # File Upload
     uploaded_file = st.file_uploader("Upload your dataset (CSV file)", type=["csv"])

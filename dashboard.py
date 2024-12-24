@@ -1,5 +1,5 @@
 import streamlit as st
-from scripts.user_overview_analysis import user_overview_page
+from src.user_overview_analysis import user_overview_page
 from src.user_engagement_analysis import user_engagement_page
 from src.experience_analytics import experience_analytics_page 
 from src.satisfaction_analysis import satisfaction_analysis_page
