@@ -84,7 +84,8 @@ class UserEngagementAnalysis:
         plt.title("Elbow Method for Optimal k")
         plt.xlabel("Number of Clusters (k)")
         plt.ylabel("Inertia")
-        plt.show()
+        plt.tight_layout()
+        return plt
 
     def analyze_application_usage(self):
         """
@@ -114,4 +115,5 @@ class UserEngagementAnalysis:
         plt.xlabel("Applications")
         plt.ylabel("Total Traffic (Bytes)")
         plt.xticks(rotation=45)
-        plt.show()
+        plt.tight_layout()
+        return plt
