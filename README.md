@@ -82,7 +82,8 @@ Python Libraries
 ```matplotlib``` and ```seaborn``` for data visualization
 
 
-
+## Deploy :
+[click me](https://tellco-week-2-eda-project-zbwuw4qlgrrrnmjmj2d9fp.streamlit.app/)
 
 
 ## Author  
