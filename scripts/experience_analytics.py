@@ -74,16 +74,4 @@ class ExperienceAnalytics:
         cluster_names = {0: 'Low Engagement', 1: 'Moderate Engagement', 2: 'High Engagement'}
         df['Cluster_Name'] = df['Cluster'].map(cluster_names)
         
-        plt.figure(figsize=(10, 7))
-        sns.scatterplot(
-            x=df['avg_throughput'], y=df['avg_rtt'], hue=df['Cluster_Name'],
-            palette='viridis', s=50, alpha=0.6
-        )
-        plt.title('K-Means Clustering of User Experience')
-        plt.xlabel('avg_throughput')
-        plt.ylabel('avg_rtt')
-        plt.legend(title='Cluster')
-        plt.show()
-        
-        cluster_summary = df.groupby('Cluster_Name')[numeric_features].mean().reset_index()
-        return cluster_summary
+        return df, kmeans

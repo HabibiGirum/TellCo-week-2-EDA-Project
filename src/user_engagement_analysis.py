@@ -55,7 +55,8 @@ def user_engagement_page():
         # 5. Determine Optimal k
         st.write("### Determine Optimal k using Elbow Method")
         try:
-            analysis.determine_optimal_k()
+            fig = analysis.determine_optimal_k()
+            st.pyplot(fig)  # Display the Elbow plot
         except ValueError as e:
             st.error(str(e))
 
@@ -63,6 +64,14 @@ def user_engagement_page():
         st.write("### Application Usage Per User")
         app_usage = analysis.analyze_application_usage()
         st.write(app_usage.head())
+
+        # Plot top applications
+        st.write("### Top Applications by User Engagement")
+        try:
+            fig = analysis.plot_top_applications(app_usage)
+            st.pyplot(fig)  # Display the top applications bar plot
+        except ValueError as e:
+            st.error(str(e))
 
 # Run the Streamlit app
 if __name__ == '__main__':
