@@ -1,7 +1,7 @@
 import streamlit as st
 from src.user_overview_analysis import user_overview_page
 from src.user_engagement_analysis import user_engagement_page
-from src.experience_analytics import experience_analysis_page
+from src.experience_analytics import experience_analytics_page
 from src.satisfaction_analysis import satisfaction_analysis_page
 
 # Configure Streamlit app
@@ -29,6 +29,6 @@ if page == "User Overview Analysis":
 elif page == "User Engagement Analysis":
     user_engagement_page()
 elif page == "Experience Analysis":
-    experience_analysis_page()
+    experience_analytics_page()
 elif page == "Satisfaction Analysis":
     satisfaction_analysis_page()
