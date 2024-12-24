@@ -85,6 +85,8 @@ Python Libraries
 ## Deploy :
 [click me](https://tellco-week-2-eda-project-zbwuw4qlgrrrnmjmj2d9fp.streamlit.app/)
 
+Database screanshot:
+![screanshot table](https://github.com/HabibiGirum/TellCo-week-2-EDA-Project/main/table.png?raw=true)
 
 ## Author  
 GitHub: [HabibiGirum](https://github.com/HabibiGirum)
