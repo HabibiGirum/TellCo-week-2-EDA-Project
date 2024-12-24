@@ -32,20 +32,21 @@ class UserEngagementAnalysis:
             "Bearer Id": "Session Frequency"
         })
 
-        # # Convert duration from ms to seconds
-        # self.aggregated_data["Total Duration (ms)"] = self.aggregated_data["Total Duration (ms)"] / 1000
-        # self.aggregated_data.drop(columns=["Total Duration (ms)"], inplace=True)
-
     def top_customers(self, metric, top_n=10):
         """
         Get top N customers based on a specified metric.
+        Ensure aggregate_metrics() is called before fetching top customers.
         """
+        if self.aggregated_data is None:
+            raise ValueError("Please call aggregate_metrics() before fetching top customers.")
         return self.aggregated_data.nlargest(top_n, metric)
 
     def normalize_and_cluster(self, k=3):
         """
         Normalize data and perform K-means clustering.
         """
+        if self.aggregated_data is None:
+            raise ValueError("Please call aggregate_metrics() before clustering.")
         scaler = MinMaxScaler()
         self.normalized_data = scaler.fit_transform(self.aggregated_data)
         self.kmeans = KMeans(n_clusters=k, random_state=42)
@@ -55,6 +56,8 @@ class UserEngagementAnalysis:
         """
         Compute statistics for each cluster.
         """
+        if self.aggregated_data is None:
+            raise ValueError("Please call aggregate_metrics() before computing cluster statistics.")
         self.cluster_stats = self.aggregated_data.groupby("Cluster").agg({
             "Total Duration (ms)": ["min", "max", "mean", "sum"],
             "Total Download Traffic (Bytes)": ["min", "max", "mean", "sum"],
@@ -67,6 +70,8 @@ class UserEngagementAnalysis:
         """
         Determine the optimal number of clusters using the elbow method.
         """
+        if self.normalized_data is None:
+            raise ValueError("Please call normalize_and_cluster() before determining optimal k.")
         inertia = []
         for k in range(1, max_k + 1):
             kmeans = KMeans(n_clusters=k, random_state=42)
@@ -99,7 +104,7 @@ class UserEngagementAnalysis:
 
     def plot_top_applications(self, user_app_traffic, top_n=3):
         """
-        Plot the top  applications based on total user engagement.
+        Plot the top applications based on total user engagement.
         """
         top_apps = user_app_traffic.sum().nlargest(top_n).index
         top_apps_data = user_app_traffic[top_apps]
@@ -110,4 +115,3 @@ class UserEngagementAnalysis:
         plt.ylabel("Total Traffic (Bytes)")
         plt.xticks(rotation=45)
         plt.show()
-
